@@ -2,43 +2,36 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ScoopOptions from './ScoopOptions';
 import ToppingOptions from './ToppingOptions';
+import Errors from '../Errors/Errors';
 
-const Options = () => {
+const Options = ({ optionType }) => {
     const [ items, setItems ] = useState([])
     const [ toppings, setToppings ] = useState([])
+    const [ error, setError ] = useState(false)
 
     useEffect(()=>{
         axios
-          .get(`http://localhost:3030/scoops`)
+          .get(`http://localhost:3030/${optionType}`)
           .then(response => setItems(response.data))
-          .catch(err => console.log(err))
-    }, [])
+          .catch(err => setError(true))
+    }, [optionType]);
 
-    useEffect(()=>{
-        axios
-          .get(`http://localhost:3030/toppings`)
-          .then(response => setToppings(response.data))
-          .catch(err => console.log(err))
-    }, [])
+    if (error){
+        return <Errors />
+    }
 
-    const scoopItems = items.map(item => (
-        <ScoopOptions
+    const ItemComponent = optionType === 'scoops' ? ScoopOptions : ToppingOptions;
+
+    const itemsList = items.map(item => (
+        <ItemComponent
             key={item.name} 
             name={item.name} 
             imagePath={item.imagePath}
         />))
 
-    const toppingItems = toppings.map(topping => (
-        <ToppingOptions
-            key={topping.name}
-            name={topping.name}
-            imagePath={topping.imagePath}
-        />))
-
     return (
         <div>
-            {scoopItems}
-            {toppingItems}
+            {itemsList}
         </div>
     )
 }

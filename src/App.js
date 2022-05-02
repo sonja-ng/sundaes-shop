@@ -1,4 +1,4 @@
-import SummaryForm from './components/SummaryForm/SummaryForm'
+import SummaryForm from './components/summary/SummaryForm'
 
 function App() {
   return (
